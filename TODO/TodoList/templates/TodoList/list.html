@@ -97,7 +97,6 @@ Todo List
             <input type="text" name="due" id="modal_datepicker" class="form-control" placeholder="유효기간(옵션)">
 
             <div class="modal-body">
-                <p id="nnn"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-default">수정</button>
@@ -111,7 +110,7 @@ Todo List
 <div class="container">
     <p>
         {% for todo in overdue %}
-            <div class="alert alert-danger" role="alert">{{ todo.name }} 의 기한이 지났습니다.!</div>
+            <div class="alert alert-danger" role="alert"><a href="#move_{{ todo.id }}">{{ todo.name }} </a>의 기한이 지났습니다.!</div>
         {% endfor %}
     </p>
     <p class="btn-group" data-toggle="buttons">
@@ -141,7 +140,8 @@ Todo List
         <ul class='list-group'>
             {% for obj in Todo %}
 
-                <li class="list-group-item {% if obj.priority == 1 %}pri_1{% elif obj.priority == 2 %}pri_2{% elif obj.priority == 3 %}pri_3{% endif %}">
+                <li class="list-group-item {% if obj.priority == 1 %}pri_1{% elif obj.priority == 2 %}pri_2{% elif obj.priority == 3 %}pri_3{% endif %}"
+                    id="move_{{ obj.id }}">
 
                     <h4>
                     
@@ -163,21 +163,22 @@ Todo List
                     {% elif obj.priority == 3 %}
                     <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></a></span>
                     {% endif %}
-                    <label id="name_{{ obj.id }}">{{ obj.name }}</label>
+                    <a data-toggle="collapse" href="#allbody_{{ obj.id }}" aria-controls="allbody_{{ obj.id }}" id="name_{{ obj.id }}">{{ obj.name }}</a>
                     {% if obj.due %} ~{% if obj.due.year != today.year %}{{ obj.due.year }}/{% endif %}{{ obj.due.month }}/{{ obj.due.day }} {% endif %}
                     </h4>
-                    <h5>
+                    <div id="allbody_{{ obj.id }}" class="collapse"><h5>
                         <p>
-                            <a href="{% url 'remove' obj.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true">삭제</span></a>
+                            <a class="btn btn-default btn-sm" href="{% url 'remove' obj.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true">삭제</span></a>
                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" 
                                 data-target="#modifyModal" data-id="{{ obj.id }}" data-priority="{{ obj.priority }}"
-                                data-due="{{ obj.due.year }}-{{ obj.due.month }}-{{ obj.due.day}}">
+                                data-due="{{ obj.dueDateFormat }}">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true">변경</span>
                             </button>
 
                         </p>
                         <p id="body_{{ obj.id }}">{{ obj.body }}</p>
                     </h5>
+                    </div>
                 </li>
             {% endfor %}
         </ul>

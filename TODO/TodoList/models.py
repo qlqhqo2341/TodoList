@@ -21,5 +21,9 @@ class Todo(models.Model):
     def isOverDueNotFinished(self):
         return self.due < timezone.now() and self.finish==False
 
+    def dueDateFormat(self):
+        due = self.due
+        return "%04d-%02d-%02d"%(due.year, due.month, due.day) if due!=None else ""
+
     def __str__(self):
         return "%s_%d_%s"%("Finished" if self.finish==True else "Ongoing", self.priority, self.name)
