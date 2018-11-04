@@ -1,0 +1,187 @@
+{% extends 'TodoList/base.html' %}
+
+{% block title %}
+Todo List
+{% endblock title %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        prevText: '이전 달',
+        nextText: '다음 달',
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+        showMonthAfterYear: true,
+        yearSuffix: '년'
+    });
+
+    $(function() {
+        $("#datepicker1").datepicker();
+        $("#modal_datepicker").datepicker();
+    });
+
+    function optclick(value, e){
+        var o = document.getElementById(e);
+        o.value=value;
+    }
+
+    function pri_visible(objs, v){
+        for(var i=0;i<objs.length;i++){
+            if(v==true)
+                objs[i].style.display = "";
+            else
+                objs[i].style.display = "none";
+        }
+    }
+    function pri_click(value){
+        var setter = [false,false,false]
+        if(value==0){
+            setter[0]=setter[1]=setter[2]=true;
+        }
+        else
+            setter[value-1]=true;
+        for(var i=1;i<=3;i++){
+            objs = document.getElementsByClassName("pri_"+i);
+            pri_visible(objs, setter[i-1])
+        }
+    }
+
+    //MODAL
+    $(document).ready(function(){
+        $("#modifyModal").on('show.bs.modal', function (event) {
+            var btn = $(event.relatedTarget)
+            var id = btn.data('id')
+            var priority = btn.data('priority')
+            $('#modal_id').val(id)
+            $('#modal_name').val($('#name_'+id).text())
+            $('#modal_body').val($('#body_'+id).text())
+            $('#modal_datepicker').val(btn.data('due'))
+            $('#modal_opt'+priority).click()
+        });
+    });
+
+
+</script>
+
+{% endblock extra_head %}
+
+{% block body %}
+<!-- Modal -->
+<div class="modal fade" id="modifyModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <form action="/modify" method="post" class="form">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="modal_id" value="0">
+            <div class="btn-group" data-toggle="buttons">
+                <button type="button" class="btn btn-default" onclick="optclick(1,'modal_opt')" id="modal_opt1">중요<input type="radio"></button>
+                <button type="button" class="btn btn-default" onclick="optclick(2,'modal_opt')" id="modal_opt2">우선<input type="radio"></button>
+                <button type="button" class="btn btn-default active" onclick="optclick(3,'modal_opt')" id="modal_opt3">일반<input type="radio" checked></button>
+                <input type="hidden" name="priority" id="modal_opt" value=3>
+            </div>
+            <input type="text" name="name" id="modal_name" class="form-control" placeholder="제목">
+            <input type="text" name="body" id="modal_body" class="form-control" placeholder="내용(옵션)">
+            <input type="text" name="due" id="modal_datepicker" class="form-control" placeholder="유효기간(옵션)">
+
+            <div class="modal-body">
+                <p id="nnn"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">수정</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                </div>
+            </div>    
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <p>
+        {% for todo in overdue %}
+            <div class="alert alert-danger" role="alert">{{ todo.name }} 의 기한이 지났습니다.!</div>
+        {% endfor %}
+    </p>
+    <p class="btn-group" data-toggle="buttons">
+        <button type="button" class="btn btn-info active" onclick="pri_click(0)">전체<span class="badge">{{ Todo.count }}<input type="radio" checked></span></button>
+        <button type="button" class="btn btn-info" onclick="pri_click(1)">중요<span class="badge">{{ len_pri1 }}<input type="radio"></span></button>
+        <button type="button" class="btn btn-info" onclick="pri_click(2)">우선<span class="badge">{{ len_pri2 }}<input type="radio"></span></button>
+        <button type="button" class="btn btn-info" onclick="pri_click(3)">일반<span class="badge">{{ len_pri3 }}<input type="radio"></span></button>
+    </p>
+    
+    <p>
+    <form action="/add" method="post" class="form-inline" >
+        {% csrf_token %}
+        <label for="text">빠른 추가 </label>
+        <div class="btn-group" data-toggle="buttons">
+            <button type="button" class="btn btn-default" onclick="optclick(1,'opt')" id="opt1">중요<input type="radio"></button>
+            <button type="button" class="btn btn-default" onclick="optclick(2,'opt')" id="opt2">우선<input type="radio"></button>
+            <button type="button" class="btn btn-default active" onclick="optclick(3,'opt')" id="opt3">일반<input type="radio" checked></button>
+            <input type="hidden" name="priority" id="opt" value=3>
+        </div>
+        <input type="text" name="name" class="form-control" placeholder="제목">
+        <input type="text" name="body" class="form-control" placeholder="내용(옵션)">
+        <input type="text" name="due" id="datepicker1" class="form-control" placeholder="유효기간(옵션)">
+        <input type="submit" class="form-control btn btn-default" value="생성">
+    </form>
+    </p>
+    <p>
+        <ul class='list-group'>
+            {% for obj in Todo %}
+
+                <li class="list-group-item {% if obj.priority == 1 %}pri_1{% elif obj.priority == 2 %}pri_2{% elif obj.priority == 3 %}pri_3{% endif %}">
+
+                    <h4>
+                    
+                    <a href="{% url 'toggle' obj.id %}">
+                    {% if obj.finish %}
+                    <span class="glyphicon glyphicon-check" aria-hidden="true"></a>
+                    </span>
+                    {% else %}
+                    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></a>
+                    </span>
+                    {% endif %}
+                    
+                    
+                    <a href="{% url 'mod_priority' obj.id %}"
+                    {% if obj.priority == 1%}
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></a></span>
+                    {% elif obj.priority == 2 %}
+                    <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></a></span>
+                    {% elif obj.priority == 3 %}
+                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></a></span>
+                    {% endif %}
+                    <label id="name_{{ obj.id }}">{{ obj.name }}</label>
+                    {% if obj.due %} ~{% if obj.due.year != today.year %}{{ obj.due.year }}/{% endif %}{{ obj.due.month }}/{{ obj.due.day }} {% endif %}
+                    </h4>
+                    <h5>
+                        <p>
+                            <a href="{% url 'remove' obj.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true">삭제</span></a>
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" 
+                                data-target="#modifyModal" data-id="{{ obj.id }}" data-priority="{{ obj.priority }}"
+                                data-due="{{ obj.due.year }}-{{ obj.due.month }}-{{ obj.due.day}}">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true">변경</span>
+                            </button>
+
+                        </p>
+                        <p id="body_{{ obj.id }}">{{ obj.body }}</p>
+                    </h5>
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
+</div>
+
+{% endblock body %}
