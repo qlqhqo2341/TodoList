@@ -73,7 +73,7 @@ Todo List
 {% endblock extra_head %}
 
 {% block body %}
-<!-- Modal -->
+<!-- modify modal -->
 <div class="modal fade" id="modifyModal" role="dialog">
     <div class="modal-dialog modal-lg">
 
@@ -81,38 +81,43 @@ Todo List
         <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Modal Header</h4>
+            <h4 class="modal-title">Todo 수정</h4>
         </div>
+        <!-- modifying form -->
         <form action="/modify" method="post" class="form">
             {% csrf_token %}
-            <input type="hidden" name="id" id="modal_id" value="0">
-            <div class="btn-group" data-toggle="buttons">
-                <button type="button" class="btn btn-default" onclick="optclick(1,'modal_opt')" id="modal_opt1">중요<input type="radio"></button>
-                <button type="button" class="btn btn-default" onclick="optclick(2,'modal_opt')" id="modal_opt2">우선<input type="radio"></button>
-                <button type="button" class="btn btn-default active" onclick="optclick(3,'modal_opt')" id="modal_opt3">일반<input type="radio" checked></button>
-                <input type="hidden" name="priority" id="modal_opt" value=3>
-            </div>
-            <input type="text" name="name" id="modal_name" class="form-control" placeholder="제목">
-            <input type="text" name="body" id="modal_body" class="form-control" placeholder="내용(옵션)">
-            <input type="text" name="due" id="modal_datepicker" class="form-control" placeholder="유효기간(옵션)">
-
             <div class="modal-body">
+                <input type="hidden" name="id" id="modal_id" value="0">
+                <div class="btn-group" data-toggle="buttons">
+                    <button type="button" class="btn btn-default" onclick="optclick(1,'modal_opt')" id="modal_opt1">중요<input type="radio"></button>
+                    <button type="button" class="btn btn-default" onclick="optclick(2,'modal_opt')" id="modal_opt2">우선<input type="radio"></button>
+                    <button type="button" class="btn btn-default active" onclick="optclick(3,'modal_opt')" id="modal_opt3">일반<input type="radio" checked></button>
+                    <input type="hidden" name="priority" id="modal_opt" value=3>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-default">수정</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-                </div>
+                <input type="text" name="name" id="modal_name" class="form-control" placeholder="제목">
+                <input type="text" name="body" id="modal_body" class="form-control" placeholder="내용(옵션)">
+                <input type="text" name="due" id="modal_datepicker" class="form-control" placeholder="유효기간(옵션)">
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default">수정</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+            </div>
             </div>    
         </form>
     </div>
 </div>
 
 <div class="container">
+
+    <!-- todo - overdue list -->
     <p>
         {% for todo in overdue %}
             <div class="alert alert-danger" role="alert"><a href="#move_{{ todo.id }}">{{ todo.name }} </a>의 기한이 지났습니다.!</div>
         {% endfor %}
     </p>
+
+    <!-- todo at specific priority -->
     <p class="btn-group" data-toggle="buttons">
         <button type="button" class="btn btn-info active" onclick="pri_click(0)">전체<span class="badge">{{ Todo.count }}<input type="radio" checked></span></button>
         <button type="button" class="btn btn-info" onclick="pri_click(1)">중요<span class="badge">{{ len_pri1 }}<input type="radio"></span></button>
@@ -120,6 +125,7 @@ Todo List
         <button type="button" class="btn btn-info" onclick="pri_click(3)">일반<span class="badge">{{ len_pri3 }}<input type="radio"></span></button>
     </p>
     
+    <!-- add todo form -->
     <p>
     <form action="/add" method="post" class="form-inline" >
         {% csrf_token %}
@@ -136,37 +142,43 @@ Todo List
         <input type="submit" class="form-control btn btn-default" value="생성">
     </form>
     </p>
+
+    <!-- Todo List Elements -->
     <p>
         <ul class='list-group'>
             {% for obj in Todo %}
-
                 <li class="list-group-item {% if obj.priority == 1 %}pri_1{% elif obj.priority == 2 %}pri_2{% elif obj.priority == 3 %}pri_3{% endif %}"
                     id="move_{{ obj.id }}">
 
                     <h4>
-                    
-                    <a href="{% url 'toggle' obj.id %}">
-                    {% if obj.finish %}
-                    <span class="glyphicon glyphicon-check" aria-hidden="true"></a>
-                    </span>
-                    {% else %}
-                    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></a>
-                    </span>
-                    {% endif %}
-                    
-                    
-                    <a href="{% url 'mod_priority' obj.id %}"
-                    {% if obj.priority == 1%}
-                    <span class="glyphicon glyphicon-star" aria-hidden="true"></a></span>
-                    {% elif obj.priority == 2 %}
-                    <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></a></span>
-                    {% elif obj.priority == 3 %}
-                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></a></span>
-                    {% endif %}
-                    <a data-toggle="collapse" href="#allbody_{{ obj.id }}" aria-controls="allbody_{{ obj.id }}" id="name_{{ obj.id }}">{{ obj.name }}</a>
-                    {% if obj.due %} ~{% if obj.due.year != today.year %}{{ obj.due.year }}/{% endif %}{{ obj.due.month }}/{{ obj.due.day }} {% endif %}
+                        <!-- finish toggle button -->
+                        <a href="{% url 'toggle' obj.id %}">
+                        {% if obj.finish %}
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></a>
+                        </span>
+                        {% else %}
+                        <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></a>
+                        </span>
+                        {% endif %}
+                        
+                        <!-- priority icon -->
+                        <a href="{% url 'mod_priority' obj.id %}"
+                        {% if obj.priority == 1%}
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></a></span>
+                        {% elif obj.priority == 2 %}
+                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></a></span>
+                        {% elif obj.priority == 3 %}
+                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></a></span>
+                        {% endif %}
+
+                        <!-- todo.name, todo.due,  collapse button -->
+                        <a data-toggle="collapse" href="#allbody_{{ obj.id }}" aria-controls="allbody_{{ obj.id }}" id="name_{{ obj.id }}">{{ obj.name }}</a>
+                        {% if obj.due %} ~{% if obj.due.year != today.year %}{{ obj.due.year }}/{% endif %}{{ obj.due.month }}/{{ obj.due.day }} {% endif %}
                     </h4>
+
+                    <!-- allbody, collapse field -->
                     <div id="allbody_{{ obj.id }}" class="collapse"><h5>
+                        <!-- remove buton, modify button -->
                         <p>
                             <a class="btn btn-default btn-sm" href="{% url 'remove' obj.id %}"><span class="glyphicon glyphicon-remove" aria-hidden="true">삭제</span></a>
                             <button type="button" class="btn btn-default btn-sm" data-toggle="modal" 
@@ -176,6 +188,8 @@ Todo List
                             </button>
 
                         </p>
+                        
+                        <!-- todo.body -->
                         <p id="body_{{ obj.id }}">{{ obj.body }}</p>
                     </h5>
                     </div>

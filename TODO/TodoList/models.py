@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class Todo(models.Model):
     name = models.TextField(null=False)
-    body = models.TextField(null=True)
+    body = models.TextField(null=False)
     priority = models.IntegerField(default=3)
     due = models.DateField(null=True)
     finish = models.BooleanField(default=False)
