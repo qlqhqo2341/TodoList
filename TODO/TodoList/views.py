@@ -17,10 +17,6 @@ def listing(request):
     }
     return render(request,"TodoList/list.html", context)
     
-class TodoView(DetailView):
-    model = Todo
-    template_name = "TodoList/detail.html"
-
 def add(request):
     arg = ['name','body','priority','due','csrfmiddlewaretoken']
     post = request.POST
@@ -60,7 +56,7 @@ def toggle(request, id):
     todo.save()
     return HttpResponseRedirect(reverse('list'))
 
-def mod_priority(request ,id):
+def mod_priority(request,id):
     todo = get_object_or_404(Todo, pk=id)
     todo.priority = todo.priority-1 if todo.priority>1 else 3
     todo.save()

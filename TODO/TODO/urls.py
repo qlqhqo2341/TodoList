@@ -21,11 +21,8 @@ app_name='TodoList'
 urlpatterns = [
     path('', views.listing, name="list"),
     path('add', views.add, name="add"),
-    path('<int:pk>', views.TodoView.as_view(), name="spec"),
-
     path('modify', views.modify, name="modify"),
     path('<int:id>/remove', views.remove, name="remove"),
     path('<int:id>/toggle', views.toggle, name="toggle"),
     path('<int:id>/mod_priority', views.mod_priority, name="mod_priority"),
-    path('admin/', admin.site.urls),
 ]
