@@ -17,6 +17,6 @@
     * 파이썬의 `virtualenv` 모듈로 가상환경에 설치할 수 있습니다.
 * 터미널에서 `manage.py`파일이 존재하는 TODO폴더로 진입합니다.
 * TODO/settings.py에서 DB백엔드를 설정합니다. 기본적으로 SQLite를 사용하게 되어있습니다.
-* db에 테이블을 만들기 위해서 `python manage.py makemigrates`와 `python manage.py migrate`를 시행합니다.
+* db에 테이블을 만들기 위해서 `python manage.py migrate`를 시행합니다.
 * `python manage.py runserver`로 실행시켜서 서버를 구동시킵니다.
     * 아이피/포트 설정은 `python manage.py runserver 아이피:포트`입니다. 기본적으로 로컬호스트, 8000번 포트가 사용됩니다.
