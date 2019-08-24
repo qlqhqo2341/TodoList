@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'TODO.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default' = {
+    'default' : {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
@@ -87,8 +87,6 @@ db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
 
-
-출처: https://dgkim5360.tistory.com/entry/deploy-django-project-on-heroku [개발새발로그]
 
 
 # Password validation
@@ -141,7 +139,3 @@ STATICFILES_DIR = [
 ]
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
-
-
-출처: https://dgkim5360.tistory.com/entry/deploy-django-project-on-heroku [개발새발로그]
