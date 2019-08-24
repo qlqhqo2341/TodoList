@@ -3,6 +3,7 @@
 ## 개요
 * 파이썬3 +  Django로 구현되어있습니다.
 * jquery, jquery ui, bootstrap 을 사용했습니다.
+* 헤로쿠에 데모가 업로드 되어있습니다. [링크](https://qlqhqo2341todo.herokuapp.com)
 
 ## 작동되는 기능
 * 제목, 내용, 기한과 우선순위(중요, 우선, 일반)을 설정할 수 있습니다.
